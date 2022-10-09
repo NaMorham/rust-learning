@@ -1,9 +1,10 @@
-use std::io;
+use std::io::{self, Write};
 
 fn main() {
     println!("Guss the number!\n");
 
-    println!("Enter your guess: ");
+    print!("Enter your guess: ");
+    io::stdout().flush().unwrap();
 
     let mut guess = String::new();
 
