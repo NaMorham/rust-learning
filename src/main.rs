@@ -29,5 +29,13 @@ fn main() {
     guess = guess.trim().to_string();
 
     println!("You guessed {}.", guess);
+    if guess.eq_ignore_ascii_case("quit") {
+        println!("{}", header.paint("OUT!"));
+    }
+    else
+    {
+        print!("{}", err.paint("TODO: "));
+        println!("Actually compare the guess");
+    }
 }
 
