@@ -26,16 +26,22 @@ fn main() {
     io::stdin().read_line(&mut guess)
         .expect("Failed to read line");
 
-    guess = guess.trim().to_string();
+    let guess_str = guess.trim().to_string();
 
-    println!("You guessed {}.", guess);
-    if guess.eq_ignore_ascii_case("quit") {
+    println!("You guessed {}.", guess_str);
+    if guess_str.eq_ignore_ascii_case("quit") {
         println!("{}", header.paint("OUT!"));
     }
     else
     {
         print!("{}", err.paint("TODO: "));
         println!("Actually compare the guess");
+        
+        let guess_num: u32 = match guess.parse() {
+            Ok(num) => num,
+            Err(_) => 9999,
+        };
+        println!("{}", err.paint("Just what the fuck are you trying to do?"));
+        println!("{}{}", debug.paint("guess is "), guess_num);
     }
 }
-
