@@ -1,37 +1,21 @@
 use std::io::{self,Write};
 use rand::Rng;
+use std::cmp::Ordering;
 
 fn main() {
 
     println!("Guess the number!");
     println!("-----------------\n");
 
-    let my_num = rand::thread_rng().gen_range(1..=100);
+    let min_val :u32 = 1;
+    let max_val :u32 = 100;
+    let my_num = rand::thread_rng().gen_range(min_val..=max_val);
 
     #[cfg(debug_assertions)]
     eprintln!("DBG: my_num: {}", my_num);
 
-    print!("Enter your guess: ");
+    print!("Enter your guess (Between {} and {}: ", min_val, max_val);
     io::stdout().flush().unwrap();
-        // match io::stdin().read_line(&mut guess) {
-        //     Ok(s) => {
-        //         guess_now = match guess.strip_suffix("\n") {
-        //             Some(g) => {
-        //                 println!("got some");
-        //                 g.to_string()
-        //             },
-        //             None => {
-        //                 println!("Got none");
-        //                 guess
-        //             },
-        //         };
-        //         println!("Raw guess: {}, {}", guess_now, s);
-        //     },
-        //     Err(e) => { 
-        //         println!("Failed to read line {e:?}");
-        //         std::process::exit(1)
-        //     },
-        // }
 
     let mut guess = String::new();
 
@@ -39,8 +23,8 @@ fn main() {
         Ok(s) => {
             eprintln!("Received {} bytes", s);
             let guess_str = guess.trim().to_string();
-
-            println!("You guessed {}.", guess_str);
+            #[cfg(debug_assertions)]
+            eprintln!("DBG: guess_str {}", guess_str);
             if guess_str.eq_ignore_ascii_case("quit") {
                 eprintln!("OUT!");
             }
@@ -49,12 +33,28 @@ fn main() {
                 eprint!("TODO: ");
                 eprintln!("Actually compare the guess");
                 
-                let guess_num: u32 = match guess.parse() {
-                    Ok(num) => num,
-                    Err(_) => 9999,
+                let guess_num: u32 = match guess_str.parse() {
+                    Ok(num) => {
+                        eprintln!("Number is {}", num);
+                        num
+                    },
+                    Err(e) => {
+                        eprintln!("Could not parse input: {}", e);
+                        9999
+                    },
                 };
-                eprintln!("Just what the fuck are you trying to do?");
                 eprintln!("guess is {}", guess_num);
+                match guess_num.cmp(&my_num) {
+                    Ordering::Less => {
+                        println!("Your guess is lower");
+                    },
+                    Ordering::Greater => {
+                        println!("Your guess is higher");
+                    },
+                    Ordering::Equal => {
+                        println!("Your guess is equal");
+                    },
+                };
             }
         },
         Err(e) => {
