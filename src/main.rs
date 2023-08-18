@@ -7,6 +7,8 @@ fn main() {
     println!("-----------------\n");
 
     let my_num = rand::thread_rng().gen_range(1..=100);
+
+    #[cfg(debug_assertions)]
     eprintln!("DBG: my_num: {}", my_num);
 
     print!("Enter your guess: ");
