@@ -44,17 +44,25 @@ fn main() {
                     },
                 };
                 eprintln!("guess is {}", guess_num);
-                match guess_num.cmp(&my_num) {
-                    Ordering::Less => {
-                        println!("Your guess is lower");
-                    },
-                    Ordering::Greater => {
-                        println!("Your guess is higher");
-                    },
-                    Ordering::Equal => {
-                        println!("Your guess is equal");
-                    },
-                };
+                if guess_num < min_val {
+                    println!("Your guess is below the minimum {}", min_val);
+                }
+                else if guess_num > max_val {
+                    println!("Your guess is above the maximum {}", max_val);
+                }
+                else {
+                    match guess_num.cmp(&my_num) {
+                        Ordering::Less => {
+                            println!("Your guess is lower");
+                        },
+                        Ordering::Greater => {
+                            println!("Your guess is higher");
+                        },
+                        Ordering::Equal => {
+                            println!("Your guess is equal");
+                        },
+                    }
+                }
             }
         },
         Err(e) => {
