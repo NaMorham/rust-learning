@@ -14,60 +14,72 @@ fn main() {
     #[cfg(debug_assertions)]
     eprintln!("DBG: my_num: {}", my_num);
 
-    print!("Enter your guess (Between {} and {}: ", min_val, max_val);
-    io::stdout().flush().unwrap();
+    loop {
+        print!("Enter your guess (Between {} and {}: ", min_val, max_val);
+        io::stdout().flush().unwrap();
 
-    let mut guess = String::new();
+        let mut guess = String::new();
 
-    match io::stdin().read_line(&mut guess) {
-        Ok(s) => {
-            eprintln!("Received {} bytes", s);
-            let guess_str = guess.trim().to_string();
-            #[cfg(debug_assertions)]
-            eprintln!("DBG: guess_str {}", guess_str);
-            if guess_str.eq_ignore_ascii_case("quit") {
-                eprintln!("OUT!");
-            }
-            else
-            {
-                eprint!("TODO: ");
-                eprintln!("Actually compare the guess");
-                
-                let guess_num: u32 = match guess_str.parse() {
-                    Ok(num) => {
-                        eprintln!("Number is {}", num);
-                        num
-                    },
-                    Err(e) => {
-                        eprintln!("Could not parse input: {}", e);
-                        9999
-                    },
-                };
-                eprintln!("guess is {}", guess_num);
-                if guess_num < min_val {
-                    println!("Your guess is below the minimum {}", min_val);
-                }
-                else if guess_num > max_val {
-                    println!("Your guess is above the maximum {}", max_val);
+        match io::stdin().read_line(&mut guess) {
+            Ok(_s) => {
+                #[cfg(debug_assertions)]
+                eprintln!("DBG: Received {} bytes", _s);
+                let guess_str = guess.trim().to_string();
+
+                #[cfg(debug_assertions)]
+                eprintln!("DBG: guess_str {}", guess_str);
+
+                if guess_str.eq_ignore_ascii_case("quit") {
+                    #[cfg(debug_assertions)]
+                    eprintln!("DBG: OUT!");
+
+                    println!("Goodbye");
+                    break;
                 }
                 else {
-                    match guess_num.cmp(&my_num) {
-                        Ordering::Less => {
-                            println!("Your guess is lower");
+                    let guess_num: u32 = match guess_str.parse() {
+                        Ok(num) => {
+                            #[cfg(debug_assertions)]
+                            eprintln!("DBG: Number is {}", num);
+                            num
                         },
-                        Ordering::Greater => {
-                            println!("Your guess is higher");
+                        Err(e) => {
+                            eprintln!("Could not parse input: {}", e);
+                            continue;
                         },
-                        Ordering::Equal => {
-                            println!("Your guess is equal");
-                        },
+                    };
+                    #[cfg(debug_assertions)]
+                    eprintln!("guess is {}", guess_num);
+                    if guess_num < min_val {
+                        println!("Your guess is below the minimum {}.  Try again", min_val);
+                        continue;
+                    }
+                    else if guess_num > max_val {
+                        println!("Your guess is above the maximum {}.  Try again", max_val);
+                        continue;
+                    }
+                    else {
+                        match guess_num.cmp(&my_num) {
+                            Ordering::Less => {
+                                println!("Your guess is lower, try again");
+                                continue;
+                            },
+                            Ordering::Greater => {
+                                println!("Your guess is higher, try again");
+                                continue;
+                            },
+                            Ordering::Equal => {
+                                println!("Your guess is equal, congratulations");
+                                break;
+                            },
+                        }
                     }
                 }
+            },
+            Err(e) => {
+                eprintln!("Failed to read input: {}", e);
+                std::process::exit(1)
             }
-        },
-        Err(e) => {
-            eprintln!("Failed to read input: {}", e);
-            std::process::exit(1)
-        }
-    }; // end match stdin
+        }; // end match stdin
+    } // end main loop
 }
