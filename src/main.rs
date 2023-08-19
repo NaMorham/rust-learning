@@ -27,27 +27,29 @@ fn number_suffix(number : u64) -> String {
 }
 
 fn main() {
-
-    println!("Guess the number!");
-    println!("-----------------\n");
-
     let min_val = 1;
     let max_val = 100;
     let max_count = 5;
     let my_num = rand::thread_rng().gen_range(min_val..=max_val);
 
-    let mut count = 0;
+    let mut count = 1;
+
+    println!("Guess the number, you have {} guesses", max_count);
+    println!("-----------------");
 
     #[cfg(debug_assertions)]
     eprintln!("DBG: my_num: {}", my_num);
 
     loop {
-        if count >= max_count {
+        if count > max_count {
             println!("You have taken too many guesses.  Goodbye");
             break;
         }
+        else {
+            println!("");
+        }
 
-        print!("Enter your guess (Between {} and {}: ", min_val, max_val);
+        print!("Enter your {} guess (Between {} and {}): ", number_suffix(count), min_val, max_val);
         io::stdout().flush().unwrap();
 
         let mut guess = String::new();
@@ -81,7 +83,7 @@ fn main() {
                         },
                     };
                     #[cfg(debug_assertions)]
-                    eprintln!("guess is {}", guess_num);
+                    eprintln!("DBG: guess is {}", guess_num);
                     if guess_num < min_val {
                         println!("Your guess is below the minimum {}.  Try again", min_val);
                         continue;
@@ -94,11 +96,16 @@ fn main() {
                         count += 1;
                         match guess_num.cmp(&my_num) {
                             Ordering::Less => {
-                                println!("Your guess is lower, try again");
+                                print!("");
+                                if count <= max_count {
+                                    println!("Your guess is lower, try again.  You have {} guesses remaining", max_count - count + 1);
+                                }
                                 continue;
                             },
                             Ordering::Greater => {
-                                println!("Your guess is higher, try again");
+                                if count <= max_count {
+                                    println!("Your guess is higher, try again.  You have {} guesses remaining", max_count - count + 1);
+                                }
                                 continue;
                             },
                             Ordering::Equal => {
@@ -107,8 +114,8 @@ fn main() {
                             },
                         }
                     }
-                }
-            },
+                } // end not quitting
+            }, // end Ok on io
             Err(e) => {
                 eprintln!("Failed to read input: {}", e);
                 std::process::exit(1)
